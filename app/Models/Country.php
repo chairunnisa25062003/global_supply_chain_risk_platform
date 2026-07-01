@@ -17,4 +17,9 @@ class Country extends Model
         'longitude',
         'flag'
     ];
+    
+public function ports()
+    {
+        return $this->hasMany(Port::class);
+    }
 }
