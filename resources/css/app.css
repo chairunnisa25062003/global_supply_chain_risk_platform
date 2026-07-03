@@ -1,11 +1,213 @@
-@import 'tailwindcss';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+:root{
+  --veranda-blue: #6BB1AD; 
+  --sky-cloud:    #A7BCBD; 
+  --lychee:       #EDECDB; 
+  --melon:        #E5A9A9; 
+  --cupid-pink:   #E6748E; 
+  --cupid-deep:   #A83A54; 
+
+
+  --bg:         var(--lychee);         
+  --surface:    #F5F4E8;                
+  --text-main:  #29403F;               
+  --border:     #DAD8C4;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --shadow-card: 0 6px 18px rgba(41, 64, 63, 0.10);
+  --font-head: 'Sora', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:var(--font-body);
+  color:var(--text-main);
+}
+
+h1,h2,h3,h4,h5,h6{
+  font-family:var(--font-head);
+  color:var(--text-main);
+  letter-spacing:-0.02em;
+}
+
+a:focus-visible,
+button:focus-visible,
+.form-control:focus{
+  outline:3px solid var(--cupid-pink);
+  outline-offset:2px;
+}
+
+.wrapper{
+  display:flex;
+  min-height:100vh;
+}
+
+.sidebar{
+  width:260px;
+  flex-shrink:0;
+  background:linear-gradient(180deg, var(--veranda-blue) 0%, #4A8C88 100%);
+  min-height:100vh;
+  padding:28px 20px;
+  color:#fff; 
+  top:0;
+}
+
+.sidebar .logo{
+  text-align:center;
+  margin-bottom:36px;
+}
+
+.sidebar .logo h3{
+  margin-top:10px;
+  font-family:var(--font-head);
+  font-size:1.15rem;
+  font-weight:700;
+  color:#fff;
+}
+
+.sidebar ul{
+  padding:0;
+  list-style:none;
+  margin:0;
+}
+
+.sidebar li{
+  padding:12px 16px;
+  margin-bottom:6px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transition:background .2s ease, transform .15s ease;
+}
+
+.sidebar li:hover{
+  background:rgba(255,255,255,.15);
+  transform:translateX(2px);
+}
+
+.sidebar li.active{
+  background:var(--cupid-pink);
+  color:#fff;
+  font-weight:700;
+}
+
+.content{
+  flex:1;
+  padding:32px 36px;
+  background:var(--bg);
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-card);
+  color:var(--text-main);
+}
+
+.card-header{
+  background:transparent;
+  border-bottom:1px solid var(--border);
+  font-family:var(--font-head);
+  font-weight:700;
+  color:var(--text-main);
+}
+
+.risk-badge{
+  display:inline-block;
+  padding:4px 14px;
+  border-radius:999px;
+  font-size:.8rem;
+  font-weight:700;
+  font-family:var(--font-body);
+}
+
+.risk-low{
+  background:rgba(107,177,173,.30);
+  color:#1F5B57;
+}
+
+.risk-medium{
+  background:rgba(229,169,169,.40);
+  color:#8A3E3E;
+}
+
+.risk-high{
+  background:var(--cupid-deep);
+  color:#fff;
+}
+
+.card.risk-low-border{ border-left:6px solid var(--veranda-blue); }
+.card.risk-medium-border{ border-left:6px solid var(--melon); }
+.card.risk-high-border{ border-left:6px solid var(--cupid-deep); }
+
+
+.btn-primary{
+  background:var(--cupid-pink);
+  border-color:var(--cupid-pink);
+  font-weight:600;
+  border-radius:var(--radius-sm);
+  color:#fff;
+}
+.btn-primary:hover{
+  background:var(--cupid-deep);
+  border-color:var(--cupid-deep);
+}
+
+.btn-outline-primary{
+  color:var(--veranda-blue);
+  border-color:var(--veranda-blue);
+  font-weight:600;
+  border-radius:var(--radius-sm);
+}
+.btn-outline-primary:hover{
+  background:var(--veranda-blue);
+  color:#fff;
+}
+
+.table{
+  color:var(--text-main);
+  background:transparent;
+}
+.table thead{
+  background:var(--veranda-blue);
+  color:#fff;
+}
+.table thead th{
+  font-family:var(--font-head);
+  font-weight:600;
+  border:none;
+}
+.table tbody tr{
+  background:var(--surface);
+}
+.table tbody tr:hover{
+  background:rgba(230,116,142,.12);
+}
+.table > :not(caption) > * > *{
+  border-bottom-color:var(--border);
+}
+
+@media (max-width: 768px){
+  .wrapper{
+    flex-direction:column;
+  }
+  .sidebar{
+    width:100%;
+    min-height:auto;
+    position:relative;
+  }
+  .content{
+    padding:20px;
+  }
 }
