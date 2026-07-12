@@ -4,7 +4,7 @@
 
     <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
-            <h2 class="fw-bold mb-1">Welcome Back 👋</h2>
+            <h2 class="fw-bold mb-1">Welcome Back</h2>
             <p class="text-muted mb-0">Monitor global supply chain risk from one dashboard.</p>
         </div>
         <button class="btn btn-primary">
@@ -12,33 +12,25 @@
         </button>
     </div>
 
-    {{-- Ringkasan cepat, tiap kartu diberi warna sesuai level risiko --}}
-    <div class="row g-3 mb-4">
-
-        <div class="col-md-4">
-            <div class="card risk-low-border p-3 h-100">
-                <span class="text-muted small">Germany</span>
-                <h3 class="fw-bold my-1">22</h3>
-                <span class="risk-badge risk-low">Low Risk</span>
+    <div class="row g-3 mb-4" id="risk-cards">
+        <div class="col-md-4" data-placeholder>
+            <div class="card p-3 h-100">
+                <span class="text-muted small">Loading...</span>
+                <h3 class="fw-bold my-1">--</h3>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card risk-medium-border p-3 h-100">
-                <span class="text-muted small">China</span>
-                <h3 class="fw-bold my-1">47</h3>
-                <span class="risk-badge risk-medium">Medium Risk</span>
+        <div class="col-md-4" data-placeholder>
+            <div class="card p-3 h-100">
+                <span class="text-muted small">Loading...</span>
+                <h3 class="fw-bold my-1">--</h3>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card risk-high-border p-3 h-100">
-                <span class="text-muted small">Example Country</span>
-                <h3 class="fw-bold my-1">78</h3>
-                <span class="risk-badge risk-high">High Risk</span>
+        <div class="col-md-4" data-placeholder>
+            <div class="card p-3 h-100">
+                <span class="text-muted small">Loading...</span>
+                <h3 class="fw-bold my-1">--</h3>
             </div>
         </div>
-
     </div>
 
     <div class="card p-4">
@@ -47,29 +39,109 @@
             <thead>
                 <tr>
                     <th>Country</th>
-                    <th>Currency</th>
-                    <th>Weather</th>
                     <th>Risk Score</th>
                     <th>Status</th>
+                    <th>News Sentiment</th>
                 </tr>
             </thead>
-            <tbody>
+            {{-- id ini yang jadi target JavaScript buat nyuntik baris data --}}
+            <tbody id="risk-table-body">
                 <tr>
-                    <td>Germany</td>
-                    <td>EUR</td>
-                    <td>Clear</td>
-                    <td>22</td>
-                    <td><span class="risk-badge risk-low">Low</span></td>
-                </tr>
-                <tr>
-                    <td>China</td>
-                    <td>CNY</td>
-                    <td>Storm Warning</td>
-                    <td>47</td>
-                    <td><span class="risk-badge risk-medium">Medium</span></td>
+                    <td colspan="4" class="text-center text-muted py-3">Loading data...</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
 @endsection
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+
+    const watchlist = ['Germany', 'China', 'Indonesia'];
+
+    const cardsContainer = document.getElementById('risk-cards');
+    const tableBody = document.getElementById('risk-table-body');
+
+    function levelToClass(level) {
+        return {
+            low: 'risk-low',
+            medium: 'risk-medium',
+            high: 'risk-high',
+        }[level] || 'risk-low';
+    }
+
+    function levelToBorderClass(level) {
+        return {
+            low: 'risk-low-border',
+            medium: 'risk-medium-border',
+            high: 'risk-high-border',
+        }[level] || 'risk-low-border';
+    }
+
+    function levelToLabel(level) {
+        return {
+            low: 'Low Risk',
+            medium: 'Medium Risk',
+            high: 'High Risk',
+        }[level] || level;
+    }
+
+    async function fetchRisk(country) {
+        const response = await fetch(`/api/risk?country=${encodeURIComponent(country)}`);
+
+        if (!response.ok) {
+            throw new Error(`Gagal ambil data untuk ${country}`);
+        }
+
+        return response.json();
+    }
+
+    function buildCard(data) {
+        return `
+            <div class="col-md-4">
+                <div class="card ${levelToBorderClass(data.level)} p-3 h-100">
+                    <span class="text-muted small">${data.country}</span>
+                    <h3 class="fw-bold my-1">${data.score}</h3>
+                    <span class="risk-badge ${levelToClass(data.level)}">${levelToLabel(data.level)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function buildTableRow(data) {
+        return `
+            <tr>
+                <td>${data.country}</td>
+                <td>${data.score}</td>
+                <td><span class="risk-badge ${levelToClass(data.level)}">${data.level}</span></td>
+                <td>${data.sentiment.negative_pct}% negative (${data.sentiment.total_articles} artikel)</td>
+            </tr>
+        `;
+    }
+
+
+    Promise.all(watchlist.map(country => fetchRisk(country)))
+        .then(results => {
+
+            cardsContainer.innerHTML = results.map(buildCard).join('');
+            tableBody.innerHTML = results.map(buildTableRow).join('');
+        })
+        .catch(error => {
+            console.error(error);
+            cardsContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="card p-3 text-center text-muted">
+                        Gagal memuat data risiko. Pastikan server Laravel & route /api/risk aktif.
+                    </div>
+                </div>
+            `;
+            tableBody.innerHTML = `
+                <tr><td colspan="4" class="text-center text-muted py-3">Gagal memuat data.</td></tr>
+            `;
+        });
+
+});
+</script>
+@endpush

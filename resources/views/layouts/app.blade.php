@@ -3,7 +3,6 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>GSCR Platform</title>
@@ -16,54 +15,90 @@
 
 <body>
 
-<div class="wrapper">
+{{-- ============================================================
+     NAVBAR — komponen resmi Bootstrap 5 (navbar-expand-lg)
+     Otomatis jadi hamburger menu di layar kecil, tidak perlu
+     JS/CSS custom buat itu, semua sudah disediakan Bootstrap.
+============================================================ --}}
+<nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+    <div class="container-fluid px-4">
 
-    <aside class="sidebar">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url('/') }}">
+            <i class="bi bi-globe-americas fs-4"></i>
+            <span class="fw-bold">GSCR <small class="fw-normal d-none d-sm-inline">Risk Platform</small></span>
+        </a>
 
-        <div class="logo">
+        {{-- Tombol hamburger, otomatis muncul di layar < 992px --}}
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            🌍
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-1">
 
-            <h3>GSCR</h3>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url('/') }}">
+                        <i class="bi bi-house-door me-1"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-globe me-1"></i> Countries
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-cloud-sun me-1"></i> Weather
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-graph-up-arrow me-1"></i> Economy
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-currency-exchange me-1"></i> Currency
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-anchor me-1"></i> Ports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-newspaper me-1"></i> News
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-exclamation-triangle me-1"></i> Risk
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-bar-chart-line me-1"></i> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-star me-1"></i> Watchlist
+                    </a>
+                </li>
 
-            <small>Risk Platform</small>
-
+            </ul>
         </div>
+    </div>
+</nav>
 
-        <ul>
-
-            <li>🏠 Dashboard</li>
-
-            <li>🌎 Countries</li>
-
-            <li>🌦 Weather</li>
-
-            <li>📈 Economy</li>
-
-            <li>💱 Currency</li>
-
-            <li>🚢 Ports</li>
-
-            <li>📰 News</li>
-
-            <li>⚠ Risk</li>
-
-            <li>📊 Analytics</li>
-
-            <li>⭐ Watchlist</li>
-
-        </ul>
-
-    </aside>
-
-    <main class="content">
-
+<main class="content">
+    <div class="container-fluid px-4 py-4">
         @yield('content')
-
-    </main>
-
-</div>
+    </div>
+</main>
 
 </body>
-
 </html>
