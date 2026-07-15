@@ -2,52 +2,67 @@
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
+/* ------------------------------------------------------------
+   1. DESIGN TOKENS
+   Cuma 1 warna aksen (indigo tua) + netral abu-krem.
+   3 warna risk-level tetap ada karena itu FUNGSIONAL
+   (bukan dekorasi), jadi wajar beda dari aksen utama.
+------------------------------------------------------------ */
 :root{
-  --veranda-blue: #6BB1AD; 
-  --sky-cloud:    #A7BCBD; 
-  --lychee:       #EDECDB; 
-  --melon:        #E5A9A9; 
-  --cupid-pink:   #E6748E; 
-  --cupid-deep:   #A83A54;
-  
-  --bg:         var(--lychee);          
-  --surface:    #F5F4E8;               
-  --text-main:  #29403F;                
-  --text-muted: #6E8482;
-  --border:     #DAD8C4;
+  --ink:      #1A1A2E; /* nyaris hitam, sedikit kebiruan -> teks & navbar */
+  --paper:    #E9E7DF; /* abu-krem, DIGELAPKAN sedikit dari sebelumnya supaya
+                           kartu (surface) tetap kelihatan beda tanpa border */
+  --surface:  #FBFAF8; /* krem sangat terang -> latar kartu, kontras jelas dari paper */
+  --border:   #E1DFD8; /* masih disimpan untuk tabel, walau card tidak pakai lagi */
 
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --shadow-card: 0 6px 18px rgba(41, 64, 63, 0.10);
-  --font-head: 'Sora', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --accent:      #4338CA; /* indigo tua, SATU-SATUNYA warna "brand" */
+  --accent-soft: #EEEDFB; /* versi pucat dari accent, buat hover/highlight halus */
+
+  --risk-low:    #2F9E5B;
+  --risk-medium: #D48A16;
+  --risk-high:   #C6362B;
+
+  --text-muted: #6B6B76;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --shadow-card: 0 1px 2px rgba(26,26,46,.04), 0 4px 12px rgba(26,26,46,.06);
+  --font-head:  'Sora', sans-serif;
+  --font-body:  'Inter', sans-serif;
 }
 
+/* ------------------------------------------------------------
+   2. RESET DASAR
+------------------------------------------------------------ */
 body{
   margin:0;
-  background:var(--bg);
+  background:var(--paper);
   font-family:var(--font-body);
-  color:var(--text-main);
+  color:var(--ink);
 }
 
 h1,h2,h3,h4,h5,h6{
   font-family:var(--font-head);
-  color:var(--text-main);
-  letter-spacing:-0.02em;
+  font-weight:700;
+  color:var(--ink);
+  letter-spacing:-0.015em;
 }
 
 a:focus-visible,
 button:focus-visible,
 .form-control:focus{
-  outline:3px solid var(--cupid-pink);
+  outline:3px solid var(--accent);
   outline-offset:2px;
 }
 
+/* ------------------------------------------------------------
+   3. NAVBAR
+------------------------------------------------------------ */
 .navbar{
-  background:linear-gradient(90deg, var(--veranda-blue) 0%, #4A8C88 100%);
+  background:var(--ink);
   padding-top:14px;
   padding-bottom:14px;
-  box-shadow:0 4px 14px rgba(41,64,63,.12);
+  box-shadow:none; /* pembeda navbar vs konten cukup dari warna gelap vs terang */
 }
 
 .navbar-brand{
@@ -57,26 +72,26 @@ button:focus-visible,
 }
 
 .navbar .nav-link{
-  color:rgba(255,255,255,.85) !important;
+  color:rgba(255,255,255,.70) !important;
   font-weight:500;
   border-radius:var(--radius-sm);
   padding:8px 14px !important;
-  transition:background .2s ease;
+  transition:background .15s ease, color .15s ease;
 }
 
 .navbar .nav-link:hover{
-  background:rgba(255,255,255,.15);
+  background:rgba(255,255,255,.08);
   color:#fff !important;
 }
 
 .navbar .nav-link.active{
-  background:var(--cupid-pink);
+  background:var(--accent);
   color:#fff !important;
-  font-weight:700;
+  font-weight:600;
 }
 
 .navbar-toggler{
-  border-color:rgba(255,255,255,.5);
+  border-color:rgba(255,255,255,.4);
 }
 .navbar-toggler-icon{
   filter:invert(1) grayscale(100%) brightness(200%);
@@ -84,106 +99,127 @@ button:focus-visible,
 
 .content{
   padding:32px 36px;
-  background:var(--bg);
+  background:var(--paper);
   min-height:calc(100vh - 70px);
 }
 
-@media (max-width: 991px){
-  .navbar-collapse{
-    margin-top:10px;
-  }
-}
-
+/* ------------------------------------------------------------
+   4. KARTU
+   Tanpa border & shadow — pembeda antar elemen murni dari
+   KONTRAS WARNA (surface lebih terang dari paper) dan SPACING,
+   bukan garis batas. Makanya --surface sengaja dibuat beda
+   cukup jelas dari --paper (bukan cuma beda tipis).
+------------------------------------------------------------ */
 .card{
   background:var(--surface);
-  border:1px solid var(--border);
+  border:none;
   border-radius:var(--radius-md);
-  box-shadow:var(--shadow-card);
-  color:var(--text-main);
+  box-shadow:none;
+  color:var(--ink);
 }
 
 .card-header{
   background:transparent;
-  border-bottom:1px solid var(--border);
+  border-bottom:none;
+  margin-bottom:8px;
   font-family:var(--font-head);
   font-weight:700;
-  color:var(--text-main);
+  color:var(--ink);
 }
 
+/* ------------------------------------------------------------
+   5. SISTEM WARNA RISK LEVEL
+------------------------------------------------------------ */
 .risk-badge{
   display:inline-block;
   padding:4px 14px;
   border-radius:999px;
-  font-size:.8rem;
+  font-size:.78rem;
   font-weight:700;
   font-family:var(--font-body);
 }
 
 .risk-low{
-  background:rgba(107,177,173,.30);
-  color:#1F5B57;
+  background:rgba(47,158,91,.14);
+  color:#1F7A45;
 }
 
 .risk-medium{
-  background:rgba(229,169,169,.40);
-  color:#8A3E3E;
+  background:rgba(212,138,22,.16);
+  color:#A66A0E;
 }
 
 .risk-high{
-  background:var(--cupid-deep);
+  background:var(--risk-high);
   color:#fff;
 }
 
-.card.risk-low-border{ border-left:6px solid var(--veranda-blue); }
-.card.risk-medium-border{ border-left:6px solid var(--melon); }
-.card.risk-high-border{ border-left:6px solid var(--cupid-deep); }
+.card.risk-low-border{ border-left:4px solid var(--risk-low); }
+.card.risk-medium-border{ border-left:4px solid var(--risk-medium); }
+.card.risk-high-border{ border-left:4px solid var(--risk-high); }
 
+/* ------------------------------------------------------------
+   6. TOMBOL
+------------------------------------------------------------ */
 .btn-primary{
-  background:var(--cupid-pink);
-  border-color:var(--cupid-pink);
+  background:var(--accent);
+  border-color:var(--accent);
   font-weight:600;
   border-radius:var(--radius-sm);
-  color:#fff;
 }
 .btn-primary:hover{
-  background:var(--cupid-deep);
-  border-color:var(--cupid-deep);
+  background:#372DAE;
+  border-color:#372DAE;
 }
 
 .btn-outline-primary{
-  color:var(--veranda-blue);
-  border-color:var(--veranda-blue);
+  color:var(--accent);
+  border-color:var(--accent);
   font-weight:600;
   border-radius:var(--radius-sm);
 }
 .btn-outline-primary:hover{
-  background:var(--veranda-blue);
+  background:var(--accent);
   color:#fff;
 }
 
+/* ------------------------------------------------------------
+   7. TABEL DATA
+   Sama seperti card: tanpa garis border antar baris.
+   Pembeda antar baris pakai warna selang-seling (zebra stripe)
+   dan padding yang cukup lega.
+------------------------------------------------------------ */
 .table{
-  color:var(--text-main);
+  color:var(--ink);
   background:transparent;
 }
 .table thead{
-  background:var(--veranda-blue);
+  background:var(--ink);
   color:#fff;
 }
 .table thead th{
   font-family:var(--font-head);
   font-weight:600;
   border:none;
+  padding:12px 16px;
+}
+.table tbody td{
+  border:none;
+  padding:14px 16px;
 }
 .table tbody tr{
   background:var(--surface);
 }
-.table tbody tr:hover{
-  background:rgba(230,116,142,.12);
+.table tbody tr:nth-child(even){
+  background:var(--paper);
 }
-.table > :not(caption) > * > *{
-  border-bottom-color:var(--border);
+.table tbody tr:hover{
+  background:var(--accent-soft);
 }
 
+/* ------------------------------------------------------------
+   8. RESPONSIVE
+------------------------------------------------------------ */
 @media (max-width: 768px){
   .content{
     padding:20px;
