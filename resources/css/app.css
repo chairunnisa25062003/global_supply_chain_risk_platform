@@ -2,21 +2,16 @@
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
-/* ------------------------------------------------------------
-   1. DESIGN TOKENS
-   Cuma 1 warna aksen (indigo tua) + netral abu-krem.
-   3 warna risk-level tetap ada karena itu FUNGSIONAL
-   (bukan dekorasi), jadi wajar beda dari aksen utama.
------------------------------------------------------------- */
+
 :root{
   --ink:      #1A1A2E; /* nyaris hitam, sedikit kebiruan -> teks & navbar */
   --paper:    #E9E7DF; /* abu-krem, DIGELAPKAN sedikit dari sebelumnya supaya
                            kartu (surface) tetap kelihatan beda tanpa border */
-  --surface:  #FBFAF8; /* krem sangat terang -> latar kartu, kontras jelas dari paper */
-  --border:   #E1DFD8; /* masih disimpan untuk tabel, walau card tidak pakai lagi */
+  --surface:  #FBFAF8; 
+  --border:   #E1DFD8; 
 
-  --accent:      #4338CA; /* indigo tua, SATU-SATUNYA warna "brand" */
-  --accent-soft: #EEEDFB; /* versi pucat dari accent, buat hover/highlight halus */
+  --accent:      #4338CA; 
+  --accent-soft: #EEEDFB; 
 
   --risk-low:    #2F9E5B;
   --risk-medium: #D48A16;
@@ -31,9 +26,7 @@
   --font-body:  'Inter', sans-serif;
 }
 
-/* ------------------------------------------------------------
-   2. RESET DASAR
------------------------------------------------------------- */
+
 body{
   margin:0;
   background:var(--paper);
@@ -55,14 +48,11 @@ button:focus-visible,
   outline-offset:2px;
 }
 
-/* ------------------------------------------------------------
-   3. NAVBAR
------------------------------------------------------------- */
 .navbar{
   background:var(--ink);
   padding-top:14px;
   padding-bottom:14px;
-  box-shadow:none; /* pembeda navbar vs konten cukup dari warna gelap vs terang */
+  box-shadow:none; 
 }
 
 .navbar-brand{
@@ -103,13 +93,6 @@ button:focus-visible,
   min-height:calc(100vh - 70px);
 }
 
-/* ------------------------------------------------------------
-   4. KARTU
-   Tanpa border & shadow — pembeda antar elemen murni dari
-   KONTRAS WARNA (surface lebih terang dari paper) dan SPACING,
-   bukan garis batas. Makanya --surface sengaja dibuat beda
-   cukup jelas dari --paper (bukan cuma beda tipis).
------------------------------------------------------------- */
 .card{
   background:var(--surface);
   border:none;
@@ -127,9 +110,6 @@ button:focus-visible,
   color:var(--ink);
 }
 
-/* ------------------------------------------------------------
-   5. SISTEM WARNA RISK LEVEL
------------------------------------------------------------- */
 .risk-badge{
   display:inline-block;
   padding:4px 14px;
@@ -154,13 +134,15 @@ button:focus-visible,
   color:#fff;
 }
 
+.sentiment-neutral{
+  background:rgba(107,107,118,.14);
+  color:#4B4B54;
+}
+
 .card.risk-low-border{ border-left:4px solid var(--risk-low); }
 .card.risk-medium-border{ border-left:4px solid var(--risk-medium); }
 .card.risk-high-border{ border-left:4px solid var(--risk-high); }
 
-/* ------------------------------------------------------------
-   6. TOMBOL
------------------------------------------------------------- */
 .btn-primary{
   background:var(--accent);
   border-color:var(--accent);
@@ -183,12 +165,6 @@ button:focus-visible,
   color:#fff;
 }
 
-/* ------------------------------------------------------------
-   7. TABEL DATA
-   Sama seperti card: tanpa garis border antar baris.
-   Pembeda antar baris pakai warna selang-seling (zebra stripe)
-   dan padding yang cukup lega.
------------------------------------------------------------- */
 .table{
   color:var(--ink);
   background:transparent;
@@ -217,9 +193,6 @@ button:focus-visible,
   background:var(--accent-soft);
 }
 
-/* ------------------------------------------------------------
-   8. RESPONSIVE
------------------------------------------------------------- */
 @media (max-width: 768px){
   .content{
     padding:20px;

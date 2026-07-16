@@ -11,6 +11,8 @@
 
 @vite(['resources/css/app.css','resources/js/app.js'])
 
+@stack('styles')
+
 </head>
 
 <body>
@@ -49,7 +51,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{ route('weather') }}">
                         <i class="bi bi-cloud-sun me-1"></i> Weather
                     </a>
                 </li>
@@ -59,7 +61,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{ route('currency') }}">
                         <i class="bi bi-currency-exchange me-1"></i> Currency
                     </a>
                 </li>
@@ -69,7 +71,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href=href="{{ route('news') }}">
                         <i class="bi bi-newspaper me-1"></i> News
                     </a>
                 </li>
@@ -99,6 +101,8 @@
         @yield('content')
     </div>
 </main>
+
+@stack('scripts')
 
 </body>
 </html>
