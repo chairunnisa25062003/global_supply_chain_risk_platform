@@ -84,6 +84,11 @@
                     <a class="nav-link" href="#">
                         <i class="bi bi-bar-chart-line me-1"></i> Analytics
                     </a>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('compare') }}">
+                        <i class="bi bi-arrow-left-right me-1"></i> Compare
+                    </a>
+                </li>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">

@@ -33,9 +33,14 @@ return [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
-    'gnews' => [
-    'key' => env('GNEWS_API_KEY'),
     ],
+
+    'gnews' => [
+        'key' => env('GNEWS_API_KEY'),
+    ],
+
+    'restcountries' => [
+        'key' => env('RESTCOUNTRIES_API_KEY'),
     ],
 
 ];
