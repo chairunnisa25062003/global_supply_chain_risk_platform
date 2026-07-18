@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Article;
+use Illuminate\Http\Request;
+
+class ArticleController extends Controller
+{
+    public function index()
+    {
+        $articles = Article::with('user')->orderByDesc('created_at')->get();
+
+        return view('admin.articles', compact('articles'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title'   => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string'],
+        ]);
+
+        Article::create([
+            'user_id' => auth()->id(),
+            'title'   => $validated['title'],
+            'content' => $validated['content'],
+        ]);
+
+        return back()->with('success', 'Artikel berhasil dipublikasikan.');
+    }
+
+    public function destroy(Article $article)
+    {
+        $article->delete();
+
+        return back()->with('success', 'Artikel berhasil dihapus.');
+    }
+}

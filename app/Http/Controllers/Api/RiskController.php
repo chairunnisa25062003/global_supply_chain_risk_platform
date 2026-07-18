@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Services\RiskScoringService;
 use App\Services\GNewsService;
 use App\Services\SentimentAnalyzer;
+use App\Services\WeatherService;
+use App\Services\CountryService;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -15,32 +18,43 @@ class RiskController extends Controller
         private RiskScoringService $riskScoringService,
         private GNewsService $gNewsService,
         private SentimentAnalyzer $sentimentAnalyzer,
+        private WeatherService $weatherService,
+        private CountryService $countryService,
+        private CurrencyService $currencyService,
     ) {}
 
-    /**
-     * GET /api/risk?country=Germany
-     */
+   
     public function index(Request $request): JsonResponse
     {
         $country = $request->query('country', 'Germany');
 
-        // STEP 1: ambil berita terkait negara ini dari GNews
-        $newsTexts = $this->gNewsService->getNewsTexts($country);
+        // STEP 1: profil negara 
+        $profile = $this->countryService->getCountryProfile($country);
+        $capital = $profile['capital'] ?? $country;
+        $inflationRate = $profile['inflation'] ?? 0;
+        $currencyCode = $profile['currency_code'] ?? 'USD';
 
-        // STEP 2: hitung sentiment dari berita-berita itu
+        // STEP 2: cuaca ASLI dari ibu kota negara ini
+        $weather = $this->weatherService->getWeatherByLocationName($capital);
+
+        // STEP 3: berita + sentiment 
+        $newsTexts = $this->gNewsService->getNewsTexts($country);
         $sentiment = $this->sentimentAnalyzer->analyzeArticles($newsTexts);
 
-        // STEP 3: data lain (cuaca, inflasi, kurs) - sementara masih dummy,
-        // nanti diganti pemanggilan Open-Meteo / World Bank / ExchangeRate API
+        // STEP 4: perubahan kurs 30 hari ASLI 
+        $currencyChangePercent = 0;
+        if ($currencyCode !== 'USD') {
+            $currencyChangePercent = $this->calculateCurrencyChangePercent('USD', $currencyCode);
+        }
+
         $rawData = [
-            'wind_speed'          => 25,
-            'storm_alert'         => false,
-            'inflation_rate'      => 4.2,
-            'news_negative_pct'   => $sentiment['negative_pct'], // sekarang dari data asli
-            'currency_change_pct' => 2.1,
+            'wind_speed'          => $weather['wind_speed'] ?? 0,
+            'storm_alert'         => $weather['is_storm'] ?? false,
+            'inflation_rate'      => $inflationRate,
+            'news_negative_pct'   => $sentiment['negative_pct'],
+            'currency_change_pct' => $currencyChangePercent,
         ];
 
-        // STEP 4: hitung risk score total
         $result = $this->riskScoringService->calculate($rawData);
 
         return response()->json([
@@ -48,7 +62,25 @@ class RiskController extends Controller
             'score'     => $result['score'],
             'level'     => $result['level'],
             'breakdown' => $result['breakdown'],
-            'sentiment' => $sentiment, // ditampilkan juga biar kelihatan detail analisisnya
+            'sentiment' => $sentiment,
         ]);
+    }
+
+    private function calculateCurrencyChangePercent(string $base, string $target): float
+    {
+        $data = $this->currencyService->getCurrencyData($base, $target);
+
+        if (! $data || count($data['history']) < 2) {
+            return 0;
+        }
+
+        $first = $data['history'][0]['rate'] ?? null;
+        $last = end($data['history'])['rate'] ?? null;
+
+        if (! $first || ! $last) {
+            return 0;
+        }
+
+        return (($last - $first) / $first) * 100;
     }
 }

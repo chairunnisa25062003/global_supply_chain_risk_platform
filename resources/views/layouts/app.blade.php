@@ -47,7 +47,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{ route('countries') }}">
                         <i class="bi bi-globe me-1"></i> Countries
                     </a>
                 </li>
@@ -57,7 +57,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{ route('economy') }}">
                         <i class="bi bi-graph-up-arrow me-1"></i> Economy
                     </a>
                 </li>
@@ -67,22 +67,22 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{ route('ports') }}">
                         <i class="bi bi-anchor me-1"></i> Ports
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href=href="{{ route('news') }}">
+                    <a class="nav-link" href="{{ route('news') }}">
                         <i class="bi bi-newspaper me-1"></i> News
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{ route('risk') }}">
                         <i class="bi bi-exclamation-triangle me-1"></i> Risk
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{ route('analytics') }}">
                         <i class="bi bi-bar-chart-line me-1"></i> Analytics
                     </a>
                 <li class="nav-item">

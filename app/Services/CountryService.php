@@ -5,25 +5,6 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 
-/**
- * ===============================================================
- * COUNTRY SERVICE
- * ===============================================================
- * CATATAN PENTING: REST Countries API pernah GRATIS TANPA KEY
- * (versi v3.1), tapi per pertengahan 2026 mereka pindah ke versi
- * BARU (v5) yang WAJIB pakai API key (gratis 500 request/bulan,
- * tanpa kartu kredit). Endpoint lama (v3.1) sudah tidak aktif.
- *
- * Kalau ditanya dosen kenapa API ini butuh key sementara yang lain
- * (Open-Meteo, GNews sisi sentiment, dst) beda-beda kebijakannya,
- * jawaban jujurnya: itu keputusan bisnis masing-masing penyedia
- * API, di luar kendali kita sebagai pengguna API gratis.
- *
- * Menggabungkan data dari 2 sumber:
- *   1. REST Countries API v5 -> identitas negara (butuh API key)
- *   2. World Bank API        -> data ekonomi (masih gratis tanpa key)
- * ===============================================================
- */
 class CountryService
 {
     private string $restCountriesUrl = 'https://api.restcountries.com/countries/v5';
@@ -50,15 +31,31 @@ class CountryService
         });
     }
 
-    
+    public function getHistoricalIndicators(string $countryName): ?array
+    {
+        $cacheKey = 'country_history_' . strtolower($countryName);
+
+        return Cache::remember($cacheKey, 21600, function () use ($countryName) {
+
+            $basicInfo = $this->fetchBasicInfo($countryName);
+
+            if (! $basicInfo || ! $basicInfo['iso2']) {
+                return null;
+            }
+
+            return [
+                'name'              => $basicInfo['name'],
+                'gdp_history'       => $this->fetchIndicatorHistory($basicInfo['iso2'], self::INDICATOR_GDP),
+                'inflation_history' => $this->fetchIndicatorHistory($basicInfo['iso2'], self::INDICATOR_INFLATION),
+            ];
+        });
+    }
 
     private function fetchBasicInfo(string $countryName): ?array
     {
         $apiKey = config('services.restcountries.key');
 
         if (empty($apiKey)) {
-           
-        
             return null;
         }
 
@@ -77,14 +74,11 @@ class CountryService
             return null;
         }
 
-    
         $currency = $data['currencies'][0] ?? null;
         $currencyCode = $currency['code'] ?? '-';
         $currencyName = $currency['name'] ?? '-';
 
-     
         $languages = implode(', ', array_column($data['languages'] ?? [], 'name'));
-
 
         $capitals = collect($data['capitals'] ?? []);
         $capital = $capitals->firstWhere('primary', true)['name']
@@ -137,5 +131,30 @@ class CountryService
             $label => $latest['value'] ?? null,
             "{$label}_year" => $latest['date'] ?? null,
         ];
+    }
+
+    private function fetchIndicatorHistory(string $iso2, string $indicatorCode): array
+    {
+        $currentYear = (int) date('Y');
+        $startYear = $currentYear - 15;
+
+        $response = Http::get("{$this->worldBankUrl}/{$iso2}/indicator/{$indicatorCode}", [
+            'format' => 'json',
+            'date'   => "{$startYear}:{$currentYear}",
+            'per_page' => 100,
+        ]);
+
+        if (! $response->successful()) {
+            return [];
+        }
+
+        $records = $response->json()[1] ?? [];
+
+        return collect($records)
+            ->filter(fn ($r) => $r['value'] !== null)
+            ->map(fn ($r) => ['year' => $r['date'], 'value' => $r['value']])
+            ->sortBy('year')
+            ->values()
+            ->toArray();
     }
 }
