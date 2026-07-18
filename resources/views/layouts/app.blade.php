@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>GSCR Platform</title>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -90,11 +91,38 @@
                     </a>
                 </li>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
+               <li class="nav-item">
+                    <a class="nav-link" href="{{ route('watchlist') }}">
                         <i class="bi bi-star me-1"></i> Watchlist
                     </a>
                 </li>
+
+@guest
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('login') }}">
+                 <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                     <a class="nav-link" href="{{ route('register') }}">
+                <i class="bi bi-person-plus me-1"></i> Daftar
+                    </a>
+                </li>
+@else
+                <li class="nav-item">
+                    <span class="nav-link">
+                <i class="bi bi-person-circle me-1"></i> {{ auth()->user()->name }}
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <form method="POST" action="{{ route('logout') }}">
+ @csrf
+            <button type="submit" class="nav-link btn btn-link" style="border:none; background:none;">
+                <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </button>
+        </form>
+    </li>
+@endguest
 
             </ul>
         </div>
