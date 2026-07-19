@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
+use App\Models\Country;
+
 
 class CountryService
 {
@@ -12,45 +13,91 @@ class CountryService
 
     private const INDICATOR_GDP       = 'NY.GDP.MKTP.CD';
     private const INDICATOR_INFLATION = 'FP.CPI.TOTL.ZG';
+    private const CACHE_HOURS         = 6;
 
     public function getCountryProfile(string $countryName): ?array
     {
-        $cacheKey = 'country_profile_' . strtolower($countryName);
+        $cached = Country::where('name', $countryName)->first();
 
-        return Cache::remember($cacheKey, 21600, function () use ($countryName) {
+        if ($cached && $cached->updated_at->diffInHours(now()) < self::CACHE_HOURS) {
+            return $this->toArray($cached);
+        }
 
-            $basicInfo = $this->fetchBasicInfo($countryName);
+        $basicInfo = $this->fetchBasicInfo($countryName);
 
-            if (! $basicInfo) {
-                return null;
-            }
+        if (! $basicInfo) {
+            return $cached ? $this->toArray($cached) : null;
+        }
 
-            $economicData = $this->fetchEconomicData($basicInfo['iso2']);
+        $economicData = $this->fetchEconomicData($basicInfo['iso2']);
+        $fullData = array_merge($basicInfo, $economicData);
 
-            return array_merge($basicInfo, $economicData);
-        });
+        $record = Country::updateOrCreate(
+            ['name' => $fullData['name']],
+            [
+                'official_name'  => $fullData['official_name'],
+                'capital'        => $fullData['capital'],
+                'region'         => $fullData['region'],
+                'subregion'      => $fullData['subregion'],
+                'population'     => $fullData['population'],
+                'currency_code'  => $fullData['currency_code'],
+                'currency_name'  => $fullData['currency_name'],
+                'languages'      => $fullData['languages'],
+                'flag'           => $fullData['flag'],
+                'iso2'           => $fullData['iso2'],
+                'iso3'           => $fullData['iso3'],
+                'gdp'            => $fullData['gdp'],
+                'gdp_year'       => $fullData['gdp_year'],
+                'inflation'      => $fullData['inflation'],
+                'inflation_year' => $fullData['inflation_year'],
+            ]
+        );
+
+        return $this->toArray($record);
     }
 
     public function getHistoricalIndicators(string $countryName): ?array
     {
-        $cacheKey = 'country_history_' . strtolower($countryName);
+        $basicInfo = $this->fetchBasicInfo($countryName);
 
-        return Cache::remember($cacheKey, 21600, function () use ($countryName) {
-
-            $basicInfo = $this->fetchBasicInfo($countryName);
-
-            if (! $basicInfo || ! $basicInfo['iso2']) {
+        if (! $basicInfo || ! $basicInfo['iso2']) {
+            $cached = Country::where('name', $countryName)->first();
+            if (! $cached || ! $cached->iso2) {
                 return null;
             }
+            $basicInfo = ['name' => $cached->name, 'iso2' => $cached->iso2];
+        }
 
-            return [
-                'name'              => $basicInfo['name'],
-                'gdp_history'       => $this->fetchIndicatorHistory($basicInfo['iso2'], self::INDICATOR_GDP),
-                'inflation_history' => $this->fetchIndicatorHistory($basicInfo['iso2'], self::INDICATOR_INFLATION),
-            ];
-        });
+        return [
+            'name'              => $basicInfo['name'],
+            'gdp_history'       => $this->fetchIndicatorHistory($basicInfo['iso2'], self::INDICATOR_GDP),
+            'inflation_history' => $this->fetchIndicatorHistory($basicInfo['iso2'], self::INDICATOR_INFLATION),
+        ];
     }
 
+    private function toArray(Country $country): array
+    {
+        return [
+            'name'          => $country->name,
+            'official_name' => $country->official_name,
+            'capital'       => $country->capital,
+            'region'        => $country->region,
+            'subregion'     => $country->subregion,
+            'population'    => $country->population,
+            'currency_code' => $country->currency_code,
+            'currency_name' => $country->currency_name,
+            'languages'     => $country->languages,
+            'flag'          => $country->flag,
+            'iso2'          => $country->iso2,
+            'iso3'          => $country->iso3,
+            'gdp'           => $country->gdp ? (float) $country->gdp : null,
+            'gdp_year'      => $country->gdp_year,
+            'inflation'     => $country->inflation ? (float) $country->inflation : null,
+            'inflation_year'=> $country->inflation_year,
+        ];
+    }
+
+    
     private function fetchBasicInfo(string $countryName): ?array
     {
         $apiKey = config('services.restcountries.key');
@@ -68,12 +115,34 @@ class CountryService
             return null;
         }
 
-        $data = $response->json('data.objects.0');
+        $objects = $response->json('data.objects', []);
 
-        if (! $data) {
+        if (empty($objects)) {
             return null;
         }
 
+        $searchLower = strtolower(trim($countryName));
+
+       
+        $exactMatch = collect($objects)->first(function ($obj) use ($searchLower) {
+            $common = strtolower($obj['names']['common'] ?? '');
+            $official = strtolower($obj['names']['official'] ?? '');
+            return $common === $searchLower || $official === $searchLower;
+        });
+
+        
+        $partialMatch = collect($objects)->first(function ($obj) use ($searchLower) {
+            return str_contains(strtolower($obj['names']['common'] ?? ''), $searchLower);
+        });
+
+        
+        $data = $exactMatch ?? $partialMatch ?? $objects[0];
+
+        return $this->parseCountryData($data, $countryName);
+    }
+
+    private function parseCountryData(array $data, string $fallbackName): array
+    {
         $currency = $data['currencies'][0] ?? null;
         $currencyCode = $currency['code'] ?? '-';
         $currencyName = $currency['name'] ?? '-';
@@ -86,8 +155,8 @@ class CountryService
             ?? '-';
 
         return [
-            'name'          => $data['names']['common'] ?? $countryName,
-            'official_name' => $data['names']['official'] ?? $countryName,
+            'name'          => $data['names']['common'] ?? $fallbackName,
+            'official_name' => $data['names']['official'] ?? $fallbackName,
             'capital'       => $capital,
             'region'        => $data['region'] ?? '-',
             'subregion'     => $data['subregion'] ?? '-',

@@ -14,21 +14,69 @@
                 <select id="base-select" class="form-select">
                     <option value="USD" selected>USD - US Dollar</option>
                     <option value="EUR">EUR - Euro</option>
-                    <option value="IDR">IDR - Rupiah</option>
-                    <option value="JPY">JPY - Yen</option>
                     <option value="GBP">GBP - Pound Sterling</option>
-                    <option value="CNY">CNY - Yuan</option>
+                    <option value="JPY">JPY - Japanese Yen</option>
+                    <option value="CNY">CNY - Chinese Yuan</option>
+                    <option value="IDR">IDR - Indonesian Rupiah</option>
+                    <option value="AUD">AUD - Australian Dollar</option>
+                    <option value="CAD">CAD - Canadian Dollar</option>
+                    <option value="CHF">CHF - Swiss Franc</option>
+                    <option value="HKD">HKD - Hong Kong Dollar</option>
+                    <option value="SGD">SGD - Singapore Dollar</option>
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="KRW">KRW - South Korean Won</option>
+                    <option value="MYR">MYR - Malaysian Ringgit</option>
+                    <option value="THB">THB - Thai Baht</option>
+                    <option value="PHP">PHP - Philippine Peso</option>
+                    <option value="MXN">MXN - Mexican Peso</option>
+                    <option value="BRL">BRL - Brazilian Real</option>
+                    <option value="ZAR">ZAR - South African Rand</option>
+                    <option value="NZD">NZD - New Zealand Dollar</option>
+                    <option value="SEK">SEK - Swedish Krona</option>
+                    <option value="NOK">NOK - Norwegian Krone</option>
+                    <option value="DKK">DKK - Danish Krone</option>
+                    <option value="PLN">PLN - Polish Zloty</option>
+                    <option value="TRY">TRY - Turkish Lira</option>
+                    <option value="ILS">ILS - Israeli Shekel</option>
+                    <option value="CZK">CZK - Czech Koruna</option>
+                    <option value="HUF">HUF - Hungarian Forint</option>
+                    <option value="RON">RON - Romanian Leu</option>
+                    <option value="ISK">ISK - Icelandic Krona</option>
                 </select>
             </div>
             <div class="col-md-4">
                 <label class="form-label small text-muted">Ke (Target)</label>
                 <select id="target-select" class="form-select">
-                    <option value="IDR" selected>IDR - Rupiah</option>
+                    <option value="IDR" selected>IDR - Indonesian Rupiah</option>
                     <option value="USD">USD - US Dollar</option>
                     <option value="EUR">EUR - Euro</option>
-                    <option value="JPY">JPY - Yen</option>
                     <option value="GBP">GBP - Pound Sterling</option>
-                    <option value="CNY">CNY - Yuan</option>
+                    <option value="JPY">JPY - Japanese Yen</option>
+                    <option value="CNY">CNY - Chinese Yuan</option>
+                    <option value="AUD">AUD - Australian Dollar</option>
+                    <option value="CAD">CAD - Canadian Dollar</option>
+                    <option value="CHF">CHF - Swiss Franc</option>
+                    <option value="HKD">HKD - Hong Kong Dollar</option>
+                    <option value="SGD">SGD - Singapore Dollar</option>
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="KRW">KRW - South Korean Won</option>
+                    <option value="MYR">MYR - Malaysian Ringgit</option>
+                    <option value="THB">THB - Thai Baht</option>
+                    <option value="PHP">PHP - Philippine Peso</option>
+                    <option value="MXN">MXN - Mexican Peso</option>
+                    <option value="BRL">BRL - Brazilian Real</option>
+                    <option value="ZAR">ZAR - South African Rand</option>
+                    <option value="NZD">NZD - New Zealand Dollar</option>
+                    <option value="SEK">SEK - Swedish Krona</option>
+                    <option value="NOK">NOK - Norwegian Krone</option>
+                    <option value="DKK">DKK - Danish Krone</option>
+                    <option value="PLN">PLN - Polish Zloty</option>
+                    <option value="TRY">TRY - Turkish Lira</option>
+                    <option value="ILS">ILS - Israeli Shekel</option>
+                    <option value="CZK">CZK - Czech Koruna</option>
+                    <option value="HUF">HUF - Hungarian Forint</option>
+                    <option value="RON">RON - Romanian Leu</option>
+                    <option value="ISK">ISK - Icelandic Krona</option>
                 </select>
             </div>
             <div class="col-md-4">
@@ -58,7 +106,6 @@
 @endsection
 
 @push('scripts')
-{{-- Chart.js dari CDN, tidak perlu npm install --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
@@ -71,10 +118,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const rateDate = document.getElementById('rate-date');
     const canvas = document.getElementById('rate-chart');
 
-    let chartInstance = null; 
+    let chartInstance = null;
 
     function renderChart(labels, data, target) {
-       
         if (chartInstance) {
             chartInstance.destroy();
         }

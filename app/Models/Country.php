@@ -7,19 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Country extends Model
 {
     protected $fillable = [
-        'country_name',
-        'country_code',
-        'capital',
-        'region',
-        'currency_code',
-        'currency_name',
-        'latitude',
-        'longitude',
-        'flag'
+        'name', 'official_name', 'capital', 'region', 'subregion',
+        'population', 'currency_code', 'currency_name', 'languages',
+        'flag', 'iso2', 'iso3', 'gdp', 'gdp_year', 'inflation', 'inflation_year',
     ];
-    
-public function ports()
-    {
-        return $this->hasMany(Port::class);
-    }
 }

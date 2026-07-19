@@ -9,6 +9,7 @@ use App\Services\SentimentAnalyzer;
 use App\Services\WeatherService;
 use App\Services\CountryService;
 use App\Services\CurrencyService;
+use App\Models\RiskScore;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -23,25 +24,20 @@ class RiskController extends Controller
         private CurrencyService $currencyService,
     ) {}
 
-   
     public function index(Request $request): JsonResponse
     {
         $country = $request->query('country', 'Germany');
 
-        // STEP 1: profil negara 
         $profile = $this->countryService->getCountryProfile($country);
         $capital = $profile['capital'] ?? $country;
         $inflationRate = $profile['inflation'] ?? 0;
         $currencyCode = $profile['currency_code'] ?? 'USD';
 
-        // STEP 2: cuaca ASLI dari ibu kota negara ini
         $weather = $this->weatherService->getWeatherByLocationName($capital);
 
-        // STEP 3: berita + sentiment 
         $newsTexts = $this->gNewsService->getNewsTexts($country);
         $sentiment = $this->sentimentAnalyzer->analyzeArticles($newsTexts);
 
-        // STEP 4: perubahan kurs 30 hari ASLI 
         $currencyChangePercent = 0;
         if ($currencyCode !== 'USD') {
             $currencyChangePercent = $this->calculateCurrencyChangePercent('USD', $currencyCode);
@@ -56,6 +52,16 @@ class RiskController extends Controller
         ];
 
         $result = $this->riskScoringService->calculate($rawData);
+
+        RiskScore::create([
+            'country_name'    => $country,
+            'score'           => $result['score'],
+            'level'           => $result['level'],
+            'weather_score'   => $result['breakdown']['weather'],
+            'inflation_score' => $result['breakdown']['inflation'],
+            'news_score'      => $result['breakdown']['news'],
+            'currency_score'  => $result['breakdown']['currency'],
+        ]);
 
         return response()->json([
             'country'   => $country,

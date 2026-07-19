@@ -7,10 +7,11 @@ use Illuminate\Database\Seeder;
 
 class PortsSeeder extends Seeder
 {
-
+   
     public function run(): void
     {
         $ports = [
+           
             ['name' => 'Port of Singapore', 'country' => 'Singapore', 'unlocode' => 'SGSIN', 'latitude' => 1.2644, 'longitude' => 103.8200, 'harbor_size' => 'Large'],
             ['name' => 'Port of Shanghai', 'country' => 'China', 'unlocode' => 'CNSHA', 'latitude' => 31.3496, 'longitude' => 121.5030, 'harbor_size' => 'Large'],
             ['name' => 'Port of Ningbo-Zhoushan', 'country' => 'China', 'unlocode' => 'CNNGB', 'latitude' => 29.8683, 'longitude' => 121.5440, 'harbor_size' => 'Large'],
@@ -60,6 +61,69 @@ class PortsSeeder extends Seeder
             ['name' => 'Port of Buenos Aires', 'country' => 'Argentina', 'unlocode' => 'ARBUE', 'latitude' => -34.6037, 'longitude' => -58.3697, 'harbor_size' => 'Medium'],
             ['name' => 'Port of Sydney (Botany Bay)', 'country' => 'Australia', 'unlocode' => 'AUSYD', 'latitude' => -33.9500, 'longitude' => 151.2260, 'harbor_size' => 'Medium'],
             ['name' => 'Port of Melbourne', 'country' => 'Australia', 'unlocode' => 'AUMEL', 'latitude' => -37.8136, 'longitude' => 144.9270, 'harbor_size' => 'Large'],
+
+            // --- TAMBAHAN BARU (~50 pelabuhan) ---
+            // Timur Tengah & Afrika Utara
+            ['name' => 'Port of Dammam (King Abdulaziz)', 'country' => 'Saudi Arabia', 'unlocode' => 'SADMM', 'latitude' => 26.4207, 'longitude' => 50.1063, 'harbor_size' => 'Large'],
+            ['name' => 'Jeddah Islamic Port', 'country' => 'Saudi Arabia', 'unlocode' => 'SAJED', 'latitude' => 21.4858, 'longitude' => 39.1925, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Salalah', 'country' => 'Oman', 'unlocode' => 'OMSLL', 'latitude' => 17.0151, 'longitude' => 54.0924, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Haifa', 'country' => 'Israel', 'unlocode' => 'ILHFA', 'latitude' => 32.8191, 'longitude' => 34.9983, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Casablanca', 'country' => 'Morocco', 'unlocode' => 'MACAS', 'latitude' => 33.6022, 'longitude' => -7.6187, 'harbor_size' => 'Medium'],
+            ['name' => 'Tanger Med Port', 'country' => 'Morocco', 'unlocode' => 'MAPTM', 'latitude' => 35.8845, 'longitude' => -5.5015, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Tunis', 'country' => 'Tunisia', 'unlocode' => 'TNTUN', 'latitude' => 36.8065, 'longitude' => 10.3081, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Djibouti', 'country' => 'Djibouti', 'unlocode' => 'DJJIB', 'latitude' => 11.5883, 'longitude' => 43.1450, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Mombasa', 'country' => 'Kenya', 'unlocode' => 'KEMBA', 'latitude' => -4.0435, 'longitude' => 39.6682, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Dar es Salaam', 'country' => 'Tanzania', 'unlocode' => 'TZDAR', 'latitude' => -6.8235, 'longitude' => 39.2695, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Abidjan', 'country' => 'Ivory Coast', 'unlocode' => 'CIABJ', 'latitude' => 5.2893, 'longitude' => -4.0159, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Tema', 'country' => 'Ghana', 'unlocode' => 'GHTEM', 'latitude' => 5.6367, 'longitude' => 0.0093, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Luanda', 'country' => 'Angola', 'unlocode' => 'AOLAD', 'latitude' => -8.8147, 'longitude' => 13.2302, 'harbor_size' => 'Small'],
+            ['name' => 'Walvis Bay Port', 'country' => 'Namibia', 'unlocode' => 'NAWVB', 'latitude' => -22.9576, 'longitude' => 14.5052, 'harbor_size' => 'Small'],
+            ['name' => 'Port of Cape Town', 'country' => 'South Africa', 'unlocode' => 'ZACPT', 'latitude' => -33.9028, 'longitude' => 18.4293, 'harbor_size' => 'Medium'],
+            // Amerika Selatan & Tengah
+            ['name' => 'Port of Callao', 'country' => 'Peru', 'unlocode' => 'PECLL', 'latitude' => -12.0508, 'longitude' => -77.1367, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Valparaiso', 'country' => 'Chile', 'unlocode' => 'CLVAP', 'latitude' => -33.0472, 'longitude' => -71.6127, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of San Antonio', 'country' => 'Chile', 'unlocode' => 'CLSAI', 'latitude' => -33.5928, 'longitude' => -71.6128, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Cartagena', 'country' => 'Colombia', 'unlocode' => 'COCTG', 'latitude' => 10.3910, 'longitude' => -75.4794, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Balboa', 'country' => 'Panama', 'unlocode' => 'PABLB', 'latitude' => 8.9500, 'longitude' => -79.5667, 'harbor_size' => 'Large'],
+            ['name' => 'Colon Container Terminal', 'country' => 'Panama', 'unlocode' => 'PACTB', 'latitude' => 9.3592, 'longitude' => -79.8988, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Manzanillo', 'country' => 'Mexico', 'unlocode' => 'MZZLO', 'latitude' => 19.0533, 'longitude' => -104.3186, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Veracruz', 'country' => 'Mexico', 'unlocode' => 'MXVER', 'latitude' => 19.1738, 'longitude' => -96.1342, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Rio de Janeiro', 'country' => 'Brazil', 'unlocode' => 'BRRIO', 'latitude' => -22.8944, 'longitude' => -43.1811, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Montevideo', 'country' => 'Uruguay', 'unlocode' => 'UYMVD', 'latitude' => -34.9011, 'longitude' => -56.2120, 'harbor_size' => 'Medium'],
+            // Eropa tambahan
+            ['name' => 'Port of Marseille-Fos', 'country' => 'France', 'unlocode' => 'FRMRS', 'latitude' => 43.3547, 'longitude' => 5.0913, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Southampton', 'country' => 'United Kingdom', 'unlocode' => 'GBSOU', 'latitude' => 50.8964, 'longitude' => -1.3935, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of London (Tilbury)', 'country' => 'United Kingdom', 'unlocode' => 'GBTIL', 'latitude' => 51.4667, 'longitude' => 0.3667, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Zeebrugge', 'country' => 'Belgium', 'unlocode' => 'BEZEE', 'latitude' => 51.3308, 'longitude' => 3.2050, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Wilhelmshaven', 'country' => 'Germany', 'unlocode' => 'DEWVN', 'latitude' => 53.5297, 'longitude' => 8.1114, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Gothenburg', 'country' => 'Sweden', 'unlocode' => 'SEGOT', 'latitude' => 57.7089, 'longitude' => 11.9746, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Oslo', 'country' => 'Norway', 'unlocode' => 'NOOSL', 'latitude' => 59.9139, 'longitude' => 10.7522, 'harbor_size' => 'Small'],
+            ['name' => 'Port of Helsinki', 'country' => 'Finland', 'unlocode' => 'FIHEL', 'latitude' => 60.1699, 'longitude' => 24.9384, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Riga', 'country' => 'Latvia', 'unlocode' => 'LVRIX', 'latitude' => 56.9496, 'longitude' => 24.1052, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Constanta', 'country' => 'Romania', 'unlocode' => 'ROCND', 'latitude' => 44.1733, 'longitude' => 28.6383, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Istanbul (Ambarli)', 'country' => 'Turkey', 'unlocode' => 'TRAMB', 'latitude' => 40.9678, 'longitude' => 28.6800, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Trieste', 'country' => 'Italy', 'unlocode' => 'ITTRS', 'latitude' => 45.6495, 'longitude' => 13.7768, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Lisbon', 'country' => 'Portugal', 'unlocode' => 'PTLIS', 'latitude' => 38.7223, 'longitude' => -9.1393, 'harbor_size' => 'Medium'],
+            // Asia tambahan
+            ['name' => 'Port of Chittagong', 'country' => 'Bangladesh', 'unlocode' => 'BDCGP', 'latitude' => 22.3569, 'longitude' => 91.7832, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Yangon', 'country' => 'Myanmar', 'unlocode' => 'MMRGN', 'latitude' => 16.7967, 'longitude' => 96.1610, 'harbor_size' => 'Small'],
+            ['name' => 'Port of Haiphong', 'country' => 'Vietnam', 'unlocode' => 'VNHPH', 'latitude' => 20.8449, 'longitude' => 106.6881, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Dalian', 'country' => 'China', 'unlocode' => 'CNDLC', 'latitude' => 38.9140, 'longitude' => 121.6147, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Xiamen', 'country' => 'China', 'unlocode' => 'CNXMN', 'latitude' => 24.4798, 'longitude' => 118.0894, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Incheon', 'country' => 'South Korea', 'unlocode' => 'KRINC', 'latitude' => 37.4563, 'longitude' => 126.7052, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Kobe', 'country' => 'Japan', 'unlocode' => 'JPUKB', 'latitude' => 34.6901, 'longitude' => 135.1955, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Osaka', 'country' => 'Japan', 'unlocode' => 'JPOSA', 'latitude' => 34.6413, 'longitude' => 135.4290, 'harbor_size' => 'Medium'],
+            // Amerika Utara tambahan
+            ['name' => 'Port of Houston', 'country' => 'United States', 'unlocode' => 'USHOU', 'latitude' => 29.7355, 'longitude' => -95.2716, 'harbor_size' => 'Large'],
+            ['name' => 'Port of Seattle', 'country' => 'United States', 'unlocode' => 'USSEA', 'latitude' => 47.5842, 'longitude' => -122.3399, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Oakland', 'country' => 'United States', 'unlocode' => 'USOAK', 'latitude' => 37.7955, 'longitude' => -122.2778, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Charleston', 'country' => 'United States', 'unlocode' => 'USCHS', 'latitude' => 32.7833, 'longitude' => -79.9333, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Montreal', 'country' => 'Canada', 'unlocode' => 'CAMTR', 'latitude' => 45.5500, 'longitude' => -73.5500, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Halifax', 'country' => 'Canada', 'unlocode' => 'CAHAL', 'latitude' => 44.6488, 'longitude' => -63.5752, 'harbor_size' => 'Medium'],
+            // Oceania tambahan
+            ['name' => 'Port of Brisbane', 'country' => 'Australia', 'unlocode' => 'AUBNE', 'latitude' => -27.3820, 'longitude' => 153.1614, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Fremantle', 'country' => 'Australia', 'unlocode' => 'AUFRE', 'latitude' => -32.0569, 'longitude' => 115.7439, 'harbor_size' => 'Medium'],
+            ['name' => 'Port of Auckland', 'country' => 'New Zealand', 'unlocode' => 'NZAKL', 'latitude' => -36.8485, 'longitude' => 174.7633, 'harbor_size' => 'Medium'],
         ];
 
         foreach ($ports as $port) {

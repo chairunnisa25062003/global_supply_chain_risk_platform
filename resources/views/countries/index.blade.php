@@ -4,10 +4,9 @@
 
     <div class="mb-4">
         <h2 class="fw-bold mb-1">Country Dashboard</h2>
-        <p class="text-muted mb-0">Cari data ekonomi & identitas negara secara real-time.</p>
+        <p class="text-muted mb-0">Cari data ekonomi, identitas negara, dan cuaca saat ini secara real-time.</p>
     </div>
 
-    {{-- Form pencarian --}}
     <div class="card p-3 mb-4">
         <form id="country-search-form" class="row g-2 align-items-end">
             <div class="col-md-8">
@@ -23,7 +22,6 @@
         </form>
     </div>
 
-    {{-- Hasil pencarian akan disuntikkan JavaScript ke sini --}}
     <div id="country-result">
         <div class="card p-4 text-center text-muted">
             Masukkan nama negara lalu klik "Cari" untuk melihat datanya.
@@ -40,20 +38,46 @@ document.addEventListener('DOMContentLoaded', function () {
     const input = document.getElementById('country-input');
     const resultBox = document.getElementById('country-result');
 
-    // Format angka besar (population, GDP) supaya gampang dibaca,
-    // misal 83000000 jadi "83,000,000"
     function formatNumber(value) {
         if (value === null || value === undefined) return '-';
         return new Intl.NumberFormat('en-US').format(value);
     }
 
-    // GDP biasanya angkanya sangat besar (triliun), kita singkat jadi "$4.2T"
     function formatGDP(value) {
         if (value === null || value === undefined) return '-';
         if (value >= 1e12) return '$' + (value / 1e12).toFixed(2) + 'T';
         if (value >= 1e9) return '$' + (value / 1e9).toFixed(2) + 'B';
         if (value >= 1e6) return '$' + (value / 1e6).toFixed(2) + 'M';
         return '$' + formatNumber(value);
+    }
+
+   
+    function buildWeatherSection(weather) {
+        if (!weather) {
+            return `<div class="col-12"><span class="text-muted small">Cuaca tidak tersedia untuk lokasi ini.</span></div>`;
+        }
+
+        const stormBadge = weather.is_storm
+            ? `<span class="risk-badge risk-high ms-2">Storm Warning</span>` : '';
+
+        return `
+            <div class="col-md-3 col-6">
+                <span class="text-muted small d-block">Suhu Saat Ini</span>
+                <strong>${weather.temperature ?? '-'}&deg;C</strong>
+            </div>
+            <div class="col-md-3 col-6">
+                <span class="text-muted small d-block">Kondisi</span>
+                <strong>${weather.condition ?? '-'} ${stormBadge}</strong>
+            </div>
+            <div class="col-md-3 col-6">
+                <span class="text-muted small d-block">Curah Hujan</span>
+                <strong>${weather.precipitation ?? 0} mm</strong>
+            </div>
+            <div class="col-md-3 col-6">
+                <span class="text-muted small d-block">Kecepatan Angin</span>
+                <strong>${weather.wind_speed ?? '-'} km/h</strong>
+            </div>
+        `;
     }
 
     function buildProfileCard(data) {
@@ -67,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                 </div>
 
-                <div class="row g-3">
+                <div class="row g-3 mb-4">
                     <div class="col-md-3 col-6">
                         <span class="text-muted small d-block">Ibu Kota</span>
                         <strong>${data.capital}</strong>
@@ -97,6 +121,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         <strong>${data.languages}</strong>
                     </div>
                 </div>
+
+                <hr>
+
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-cloud-sun"></i>
+                    <strong class="small text-uppercase text-muted">Cuaca Saat Ini — ${data.capital}</strong>
+                </div>
+                <div class="row g-3" id="weather-section">
+                    <div class="col-12"><span class="text-muted small">Memuat cuaca...</span></div>
+                </div>
             </div>
         `;
     }
@@ -115,6 +149,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             resultBox.innerHTML = buildProfileCard(data);
 
+          
+            if (data.capital && data.capital !== '-') {
+                fetch(`/api/weather?location=${encodeURIComponent(data.capital)}`)
+                    .then(res => res.json())
+                    .then(weather => {
+                        document.getElementById('weather-section').innerHTML = buildWeatherSection(weather);
+                    })
+                    .catch(() => {
+                        document.getElementById('weather-section').innerHTML =
+                            `<div class="col-12"><span class="text-muted small">Gagal memuat cuaca.</span></div>`;
+                    });
+            }
+
         } catch (error) {
             console.error(error);
             resultBox.innerHTML = `<div class="card p-4 text-center text-muted">Gagal memuat data. Coba lagi.</div>`;
@@ -129,7 +176,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Langsung tampilkan Germany begitu halaman dibuka, biar tidak kosong
     searchCountry(input.value);
 
 });
