@@ -98,7 +98,8 @@
         <div class="col-md-8">
             <div class="card p-4">
                 <div class="card-header border-0 px-0 pt-0">Tren 30 Hari Terakhir</div>
-                <canvas id="rate-chart" height="120"></canvas>
+                <p class="text-muted small mb-3">Garis naik = mata uang tujuan menguat. Garis turun = melemah.</p>
+                <canvas id="rate-chart" height="140"></canvas>
             </div>
         </div>
     </div>
@@ -109,6 +110,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.color = '#6B6B76';
+Chart.defaults.plugins.tooltip.backgroundColor = '#1A1A2E';
+Chart.defaults.plugins.tooltip.padding = 12;
+Chart.defaults.plugins.tooltip.cornerRadius = 8;
+Chart.defaults.plugins.tooltip.titleFont = { family: "'Sora', sans-serif", weight: '700', size: 13 };
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const form = document.getElementById('currency-form');
@@ -120,10 +128,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let chartInstance = null;
 
+    function createGradient(ctx, colorStart) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, colorStart + '55');
+        gradient.addColorStop(1, colorStart + '00');
+        return gradient;
+    }
+
     function renderChart(labels, data, target) {
         if (chartInstance) {
             chartInstance.destroy();
         }
+
+        const ctx = canvas.getContext('2d');
 
         chartInstance = new Chart(canvas, {
             type: 'line',
@@ -133,10 +150,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     label: `Kurs ke ${target}`,
                     data: data,
                     borderColor: '#4338CA',
-                    backgroundColor: 'rgba(67, 56, 202, 0.08)',
+                    backgroundColor: createGradient(ctx, '#4338CA'),
                     fill: true,
-                    tension: 0.3,
-                    pointRadius: 2,
+                    tension: 0.35,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#4338CA',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2,
+                    borderWidth: 2.5,
                 }],
             },
             options: {
@@ -144,8 +166,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 plugins: {
                     legend: { display: false },
                 },
+                interaction: { intersect: false, mode: 'index' },
                 scales: {
-                    y: { beginAtZero: false },
+                    y: { beginAtZero: false, grid: { color: 'rgba(0,0,0,0.06)' } },
+                    x: { grid: { display: false } },
                 },
             },
         });
