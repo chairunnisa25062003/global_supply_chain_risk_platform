@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="row g-3">
+    <div class="row g-3 mb-4">
         <div class="col-md-4">
             <a href="{{ route('admin.users') }}" class="text-decoration-none">
                 <div class="card p-4">
@@ -62,6 +62,22 @@
                 </div>
             </a>
         </div>
+    </div>
+
+    {{-- BARU: Activity Log, bukti tabel activity_logs beneran terpakai --}}
+    <div class="card p-4">
+        <div class="card-header border-0 px-0 pt-0">Aktivitas Admin Terbaru</div>
+        @forelse ($recentActivity as $log)
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <div>
+                    <strong class="d-block small">{{ $log->description ?? $log->action }}</strong>
+                    <span class="text-muted small">oleh {{ $log->user->name ?? 'Unknown' }}</span>
+                </div>
+                <span class="text-muted small">{{ $log->created_at->diffForHumans() }}</span>
+            </div>
+        @empty
+            <span class="text-muted small">Belum ada aktivitas tercatat.</span>
+        @endforelse
     </div>
 
 @endsection

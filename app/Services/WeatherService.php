@@ -3,29 +3,66 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
+use App\Models\WeatherCache;
+
 
 class WeatherService
 {
     private string $geocodingUrl = 'https://geocoding-api.open-meteo.com/v1/search';
     private string $forecastUrl  = 'https://api.open-meteo.com/v1/forecast';
+    private const CACHE_MINUTES = 15;
 
     public function getWeatherByLocationName(string $locationName): ?array
     {
-        $cacheKey = 'weather_' . strtolower($locationName);
+        $cached = WeatherCache::where('location_name', $locationName)->first();
 
-        return Cache::remember($cacheKey, 900, function () use ($locationName) {
+        if ($cached && $cached->fetched_at->diffInMinutes(now()) < self::CACHE_MINUTES) {
+            return $this->toArray($cached);
+        }
 
-            $location = $this->geocode($locationName);
+        $location = $this->geocode($locationName);
 
-            if (! $location) {
-                return null;
-            }
+        if (! $location) {
+            return $cached ? $this->toArray($cached) : null;
+        }
 
-            $weather = $this->fetchCurrentWeather($location['latitude'], $location['longitude']);
+        $weather = $this->fetchCurrentWeather($location['latitude'], $location['longitude']);
+        $fullData = array_merge($location, $weather);
 
-            return array_merge($location, $weather);
-        });
+        $record = WeatherCache::updateOrCreate(
+            ['location_name' => $locationName],
+            [
+                'latitude'      => $fullData['latitude'],
+                'longitude'     => $fullData['longitude'],
+                'temperature'   => $fullData['temperature'],
+                'condition'     => $fullData['condition'],
+                'precipitation' => $fullData['precipitation'],
+                'wind_speed'    => $fullData['wind_speed'],
+                'is_storm'      => $fullData['is_storm'],
+                'fetched_at'    => now(),
+            ]
+        );
+
+       
+        return array_merge($this->toArray($record), [
+            'location_name' => $location['location_name'],
+            'country'       => $location['country'],
+        ]);
+    }
+
+    private function toArray(WeatherCache $cache): array
+    {
+        return [
+            'location_name' => $cache->location_name,
+            'country'       => '-', 
+            'latitude'      => $cache->latitude,
+            'longitude'     => $cache->longitude,
+            'temperature'   => $cache->temperature,
+            'condition'     => $cache->condition,
+            'precipitation' => $cache->precipitation,
+            'wind_speed'    => $cache->wind_speed,
+            'is_storm'      => $cache->is_storm,
+        ];
     }
 
     private function geocode(string $name): ?array
@@ -65,7 +102,7 @@ class WeatherService
         ]);
 
         if (! $response->successful()) {
-            return ['temperature' => null, 'precipitation' => null, 'wind_speed' => null, 'condition' => 'Unknown'];
+            return ['temperature' => null, 'precipitation' => null, 'wind_speed' => null, 'condition' => 'Unknown', 'is_storm' => false];
         }
 
         $current = $response->json('current', []);
@@ -75,7 +112,6 @@ class WeatherService
             'temperature'    => $current['temperature_2m'] ?? null,
             'precipitation'  => $current['precipitation'] ?? null,
             'wind_speed'     => $current['wind_speed_10m'] ?? null,
-            'weather_code'   => $code,
             'condition'      => $this->weatherCodeToLabel($code),
             'is_storm'       => $this->isStormCondition($code, $current['wind_speed_10m'] ?? 0),
         ];
@@ -97,7 +133,6 @@ class WeatherService
         };
     }
 
-  
     private function isStormCondition(?int $code, float $windSpeed): bool
     {
         $isThunderstorm = in_array($code, [95, 96, 99], true);

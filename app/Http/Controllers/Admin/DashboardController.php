@@ -7,12 +7,12 @@ use App\Models\User;
 use App\Models\Port;
 use App\Models\Article;
 use App\Models\Watchlist;
+use App\Models\ActivityLog;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        
         $stats = [
             'total_users'      => User::count(),
             'total_ports'      => Port::count(),
@@ -20,6 +20,9 @@ class DashboardController extends Controller
             'total_watchlists' => Watchlist::count(),
         ];
 
-        return view('admin.dashboard', compact('stats'));
+       
+        $recentActivity = ActivityLog::with('user')->orderByDesc('created_at')->limit(10)->get();
+
+        return view('admin.dashboard', compact('stats', 'recentActivity'));
     }
 }

@@ -5,7 +5,6 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use App\Models\Country;
 
-
 class CountryService
 {
     private string $restCountriesUrl = 'https://api.restcountries.com/countries/v5';
@@ -13,6 +12,9 @@ class CountryService
 
     private const INDICATOR_GDP       = 'NY.GDP.MKTP.CD';
     private const INDICATOR_INFLATION = 'FP.CPI.TOTL.ZG';
+    // BARU: sesuai spesifikasi, World Bank juga diminta buat Ekspor & Impor
+    private const INDICATOR_EXPORTS   = 'NE.EXP.GNFS.CD'; // Exports of goods & services (current US$)
+    private const INDICATOR_IMPORTS   = 'NE.IMP.GNFS.CD'; // Imports of goods & services (current US$)
     private const CACHE_HOURS         = 6;
 
     public function getCountryProfile(string $countryName): ?array
@@ -50,6 +52,10 @@ class CountryService
                 'gdp_year'       => $fullData['gdp_year'],
                 'inflation'      => $fullData['inflation'],
                 'inflation_year' => $fullData['inflation_year'],
+                'exports'        => $fullData['exports'],
+                'exports_year'   => $fullData['exports_year'],
+                'imports'        => $fullData['imports'],
+                'imports_year'   => $fullData['imports_year'],
             ]
         );
 
@@ -94,10 +100,13 @@ class CountryService
             'gdp_year'      => $country->gdp_year,
             'inflation'     => $country->inflation ? (float) $country->inflation : null,
             'inflation_year'=> $country->inflation_year,
+            'exports'       => $country->exports ? (float) $country->exports : null,
+            'exports_year'  => $country->exports_year,
+            'imports'       => $country->imports ? (float) $country->imports : null,
+            'imports_year'  => $country->imports_year,
         ];
     }
 
-    
     private function fetchBasicInfo(string $countryName): ?array
     {
         $apiKey = config('services.restcountries.key');
@@ -123,19 +132,16 @@ class CountryService
 
         $searchLower = strtolower(trim($countryName));
 
-       
         $exactMatch = collect($objects)->first(function ($obj) use ($searchLower) {
             $common = strtolower($obj['names']['common'] ?? '');
             $official = strtolower($obj['names']['official'] ?? '');
             return $common === $searchLower || $official === $searchLower;
         });
 
-        
         $partialMatch = collect($objects)->first(function ($obj) use ($searchLower) {
             return str_contains(strtolower($obj['names']['common'] ?? ''), $searchLower);
         });
 
-        
         $data = $exactMatch ?? $partialMatch ?? $objects[0];
 
         return $this->parseCountryData($data, $countryName);
@@ -173,12 +179,19 @@ class CountryService
     private function fetchEconomicData(?string $iso2): array
     {
         if (! $iso2) {
-            return ['gdp' => null, 'gdp_year' => null, 'inflation' => null, 'inflation_year' => null];
+            return [
+                'gdp' => null, 'gdp_year' => null,
+                'inflation' => null, 'inflation_year' => null,
+                'exports' => null, 'exports_year' => null,
+                'imports' => null, 'imports_year' => null,
+            ];
         }
 
         return [
             ...$this->fetchIndicator($iso2, self::INDICATOR_GDP, 'gdp'),
             ...$this->fetchIndicator($iso2, self::INDICATOR_INFLATION, 'inflation'),
+            ...$this->fetchIndicator($iso2, self::INDICATOR_EXPORTS, 'exports'),
+            ...$this->fetchIndicator($iso2, self::INDICATOR_IMPORTS, 'imports'),
         ];
     }
 

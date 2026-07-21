@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Port;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class PortController extends Controller
@@ -28,12 +29,17 @@ class PortController extends Controller
 
         Port::create($validated);
 
+        ActivityLog::record('add_port', "Menambahkan pelabuhan {$validated['name']}");
+
         return back()->with('success', 'Pelabuhan baru berhasil ditambahkan.');
     }
 
     public function destroy(Port $port)
     {
+        $name = $port->name;
         $port->delete();
+
+        ActivityLog::record('delete_port', "Menghapus pelabuhan {$name}");
 
         return back()->with('success', 'Pelabuhan berhasil dihapus.');
     }

@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return '$' + formatNumber(value);
     }
 
-   
+    
     function buildWeatherSection(weather) {
         if (!weather) {
             return `<div class="col-12"><span class="text-muted small">Cuaca tidak tersedia untuk lokasi ini.</span></div>`;
@@ -116,6 +116,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         <span class="text-muted small d-block">Inflasi ${data.inflation_year ? '(' + data.inflation_year + ')' : ''}</span>
                         <strong>${data.inflation !== null ? data.inflation.toFixed(2) + '%' : '-'}</strong>
                     </div>
+                    <div class="col-md-3 col-6">
+                        <span class="text-muted small d-block">Ekspor ${data.exports_year ? '(' + data.exports_year + ')' : ''}</span>
+                        <strong>${formatGDP(data.exports)}</strong>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <span class="text-muted small d-block">Impor ${data.imports_year ? '(' + data.imports_year + ')' : ''}</span>
+                        <strong>${formatGDP(data.imports)}</strong>
+                    </div>
                     <div class="col-md-6 col-12">
                         <span class="text-muted small d-block">Bahasa</span>
                         <strong>${data.languages}</strong>
@@ -149,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             resultBox.innerHTML = buildProfileCard(data);
 
-          
+           
             if (data.capital && data.capital !== '-') {
                 fetch(`/api/weather?location=${encodeURIComponent(data.capital)}`)
                     .then(res => res.json())

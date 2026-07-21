@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -28,12 +29,17 @@ class ArticleController extends Controller
             'content' => $validated['content'],
         ]);
 
+        ActivityLog::record('publish_article', "Mempublikasikan artikel: {$validated['title']}");
+
         return back()->with('success', 'Artikel berhasil dipublikasikan.');
     }
 
     public function destroy(Article $article)
     {
+        $title = $article->title;
         $article->delete();
+
+        ActivityLog::record('delete_article', "Menghapus artikel: {$title}");
 
         return back()->with('success', 'Artikel berhasil dihapus.');
     }
