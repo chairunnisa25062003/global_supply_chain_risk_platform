@@ -16,7 +16,7 @@
 
     <div class="mb-4">
         <h2 class="fw-bold mb-1">Port Location Dashboard</h2>
-        <p class="text-muted mb-0">Lokasi pelabuhan utama dunia. Data tersimpan lokal (bukan API real-time).</p>
+        <p class="text-muted mb-0">Lokasi & status kemacetan pelabuhan utama dunia.</p>
     </div>
 
     <div class="card p-3 mb-4">
@@ -74,11 +74,21 @@ document.addEventListener('DOMContentLoaded', function () {
         maxZoom: 18,
     }).addTo(map);
 
-    let markers = []; 
+    let markers = [];
 
     function clearMarkers() {
         markers.forEach(marker => map.removeLayer(marker));
         markers = [];
+    }
+
+    // BARU: warna marker & badge sekarang mengikuti STATUS kemacetan,
+    // bukan cuma warna solid biasa. Normal = hijau, Busy = kuning,
+    // Congested = merah -- konsisten sama sistem warna risk-level.
+    function statusColor(status) {
+        return { Normal: '#2F9E5B', Busy: '#D48A16', Congested: '#C6362B' }[status] || '#4338CA';
+    }
+    function statusBadgeClass(status) {
+        return { Normal: 'risk-low', Busy: 'risk-medium', Congested: 'risk-high' }[status] || 'risk-low';
     }
 
     function buildListItem(port) {
@@ -89,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <strong class="d-block">${port.name}</strong>
                     <span class="text-muted small">${port.country} ${port.unlocode ? '· ' + port.unlocode : ''}</span>
                 </div>
-                <span class="risk-badge risk-low">${port.harbor_size ?? '-'}</span>
+                <span class="risk-badge ${statusBadgeClass(port.status)}">${port.status}</span>
             </div>
         `;
     }
@@ -115,17 +125,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             listHeader.textContent = `Daftar Pelabuhan (${ports.length})`;
 
-        
             ports.forEach(port => {
+                const color = statusColor(port.status);
                 const marker = L.circleMarker([port.latitude, port.longitude], {
-                    radius: 7,
-                    fillColor: '#4338CA',
+                    radius: port.status === 'Congested' ? 9 : 7,
+                    fillColor: color,
                     color: '#1A1A2E',
                     weight: 1.5,
                     fillOpacity: 0.85,
                 }).addTo(map);
 
-                marker.bindPopup(`<strong>${port.name}</strong><br>${port.country}`);
+                marker.bindPopup(`<strong>${port.name}</strong><br>${port.country}<br>Status: <b>${port.status}</b>`);
                 markers.push(marker);
             });
 
@@ -155,7 +165,6 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         loadPorts(searchInput.value.trim(), countryInput.value.trim());
     });
-
 
     loadPorts();
 

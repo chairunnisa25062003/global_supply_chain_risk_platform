@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Port extends Model
 {
     protected $fillable = [
-        'name', 'country', 'unlocode', 'latitude', 'longitude', 'harbor_size',
+        'name', 'country', 'unlocode', 'latitude', 'longitude', 'harbor_size', 'status',
     ];
 }

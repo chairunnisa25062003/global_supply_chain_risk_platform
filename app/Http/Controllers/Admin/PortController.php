@@ -25,6 +25,7 @@ class PortController extends Controller
             'latitude'    => ['required', 'numeric', 'between:-90,90'],
             'longitude'   => ['required', 'numeric', 'between:-180,180'],
             'harbor_size' => ['nullable', 'string', 'in:Small,Medium,Large'],
+            'status'      => ['nullable', 'string', 'in:Normal,Busy,Congested'],
         ]);
 
         Port::create($validated);
@@ -32,6 +33,20 @@ class PortController extends Controller
         ActivityLog::record('add_port', "Menambahkan pelabuhan {$validated['name']}");
 
         return back()->with('success', 'Pelabuhan baru berhasil ditambahkan.');
+    }
+
+    
+    public function updateStatus(Request $request, Port $port)
+    {
+        $validated = $request->validate([
+            'status' => ['required', 'string', 'in:Normal,Busy,Congested'],
+        ]);
+
+        $port->update($validated);
+
+        ActivityLog::record('update_port_status', "Mengubah status {$port->name} jadi {$validated['status']}");
+
+        return back()->with('success', "Status {$port->name} diubah jadi {$validated['status']}.");
     }
 
     public function destroy(Port $port)

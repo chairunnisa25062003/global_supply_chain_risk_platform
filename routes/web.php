@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\PortController as AdminPortController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\PortImportController;
 
 Route::get('/', function () {
     return view('dashboard.index');
@@ -41,6 +42,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/ports', [AdminPortController::class, 'index'])->name('ports');
     Route::post('/ports', [AdminPortController::class, 'store'])->name('ports.store');
     Route::delete('/ports/{port}', [AdminPortController::class, 'destroy'])->name('ports.destroy');
+    Route::patch('/ports/{port}/status', [AdminPortController::class, 'updateStatus'])->name('ports.update-status');
+    Route::post('/ports/import', [PortImportController::class, 'store'])->name('ports.import');
 
     Route::get('/articles', [AdminArticleController::class, 'index'])->name('articles');
     Route::post('/articles', [AdminArticleController::class, 'store'])->name('articles.store');
@@ -57,3 +60,4 @@ Route::get('/compare', fn () => view('compare.index'))->name('compare');
 Route::get('/economy', fn () => view('economy.index'))->name('economy');
 Route::get('/risk', fn () => view('risk.index'))->name('risk');
 Route::get('/analytics', fn () => view('analytics.index'))->name('analytics');
+
